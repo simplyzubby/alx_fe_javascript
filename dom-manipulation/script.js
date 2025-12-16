@@ -92,4 +92,6 @@ function importFromJsonFile(event) {
 // Event listeners
 newQuoteBtn.addEventListener("click", showRandomQuote);
 addQuoteBtn.addEventListener("click", addQuote);
+
 exportBtn.addEventListener("click", exportQuotesToJson);
+
