@@ -4,7 +4,7 @@ const SYNC_INTERVAL = 15000; // 15 seconds
 // --------------------
 // Fetch Quotes from Server
 // --------------------
-async function fetchServerQuotes() {
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
     const data = await response.json();
