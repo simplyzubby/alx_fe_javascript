@@ -1,4 +1,79 @@
+const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
+const SYNC_INTERVAL = 15000; // 15 seconds
 
+// --------------------
+// Fetch Quotes from Server
+// --------------------
+async function fetchServerQuotes() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const data = await response.json();
+
+    // Convert server posts to quotes format
+    const serverQuotes = data.slice(0, 5).map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    syncWithServer(serverQuotes);
+  } catch (error) {
+    console.error("Server sync failed:", error);
+  }
+}
+
+// --------------------
+// Sync Logic (Server Wins)
+// --------------------
+function syncWithServer(serverQuotes) {
+  const localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+  // Detect conflicts
+  const conflicts = localQuotes.filter(localQuote =>
+    serverQuotes.some(serverQuote => serverQuote.text === localQuote.text)
+  );
+
+  // Server takes precedence
+  const mergedQuotes = [
+    ...serverQuotes,
+    ...localQuotes.filter(
+      localQuote =>
+        !serverQuotes.some(serverQuote => serverQuote.text === localQuote.text)
+    )
+  ];
+
+  quotes = mergedQuotes;
+  localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+
+  populateCategories();
+  filterQuotes();
+
+  if (conflicts.length > 0) {
+    showSyncNotification(conflicts.length);
+  }
+}
+
+// --------------------
+// User Notification
+// --------------------
+function showSyncNotification(conflictCount) {
+  const notification = document.createElement("div");
+  notification.textContent = `⚠️ ${conflictCount} conflict(s) resolved using server data.`;
+  notification.style.background = "#ffe0e0";
+  notification.style.padding = "10px";
+  notification.style.margin = "10px 0";
+
+  document.body.prepend(notification);
+
+  setTimeout(() => notification.remove(), 5000);
+}
+
+// --------------------
+// Manual Sync Button
+// --------------------
+function manualSync() {
+  fetchServerQuotes();
+  alert("Manual sync completed.");
+}
  
 let quotes = JSON.parse(localStorage.getItem("quotes")) || [
   { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
@@ -150,3 +225,4 @@ addQuoteBtn.addEventListener("click", addQuote);
 
 exportBtn.addEventListener("click", exportQuotesToJson);
 
+setInterval(fetchServerQuotes, SYNC_INTERVAL);
