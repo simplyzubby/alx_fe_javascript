@@ -14,11 +14,14 @@ function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
 
-  quoteDisplay.innerHTML = `
-    <p>"${quote.text}"</p>
-    <small>— ${quote.category}</small>
-  `;
-}
+ const p = document.createElement("p");
+  p.textContent = `"${quote.text}"`;
+
+  const small = document.createElement("small");
+  small.textContent = `— ${quote.category}`;
+
+  quoteDisplay.appendChild(p);
+  quoteDisplay.appendChild(small);}
 
 // Create & handle adding new quotes
 function createAddQuoteForm() {
@@ -29,13 +32,11 @@ function createAddQuoteForm() {
     alert("Please enter both quote text and category");
     return;
   }
+ quotes.push({ text, category });
 
-  const newQuote = {
-    text: quoteText,
-    category: quoteCategory
-  };
+textInput.value = "";
+  categoryInput.value = "";
 
-  quotes.push(newQuote);
 
   // Clear inputs
   document.getElementById("newQuoteText").value = "";
