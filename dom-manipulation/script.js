@@ -14,14 +14,17 @@ function showRandomQuote() {
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex];
 
-  quoteDisplay.innerHTML = `
-    <p>"${quote.text}"</p>
-    <small>— ${quote.category}</small>
-  `;
-}
+ const p = document.createElement("p");
+  p.textContent = `"${quote.text}"`;
+
+  const small = document.createElement("small");
+  small.textContent = `— ${quote.category}`;
+
+  quoteDisplay.appendChild(p);
+  quoteDisplay.appendChild(small);}
 
 // Create & handle adding new quotes
-function addQuote() {
+function createAddQuoteForm() {
   const quoteText = document.getElementById("newQuoteText").value.trim();
   const quoteCategory = document.getElementById("newQuoteCategory").value.trim();
 
@@ -29,13 +32,25 @@ function addQuote() {
     alert("Please enter both quote text and category");
     return;
   }
+ quotes.push({ text, category });
 
-  const newQuote = {
-    text: quoteText,
-    category: quoteCategory
-  };
+  // Update DOM immediately
+  quoteDisplay.innerHTML = "";
 
-  quotes.push(newQuote);
+  const p = document.createElement("p");
+  p.textContent = `"${text}"`;
+
+  const small = document.createElement("small");
+  small.textContent = `— ${category}`;
+
+  quoteDisplay.appendChild(p);
+  quoteDisplay.appendChild(small);
+
+  // Clear inputs
+  textInput.value = "";
+  categoryInput.value = "";
+
+
 
   // Clear inputs
   document.getElementById("newQuoteText").value = "";
