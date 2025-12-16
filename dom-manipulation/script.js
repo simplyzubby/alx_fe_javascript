@@ -16,6 +16,51 @@ function saveQuotes() {
   localStorage.setItem("quotes", JSON.stringify(quotes));
 }
 
+function populateCategories() {
+  const categories = [...new Set(quotes.map(q => q.category))];
+
+  categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
+
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
+
+ const savedFilter = localStorage.getItem("selectedCategory");
+  if (savedFilter) {
+    categoryFilter.value = savedFilter;
+  }
+function filterQuotes() {
+  const selectedCategory = categoryFilter.value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+
+  quoteDisplay.innerHTML = "";
+
+  const filteredQuotes =
+    selectedCategory === "all"
+      ? quotes
+      : quotes.filter(q => q.category === selectedCategory);
+
+  if (filteredQuotes.length === 0) {
+    quoteDisplay.textContent = "No quotes found for this category.";
+    return;
+  }
+
+  filteredQuotes.forEach(quote => {
+    const p = document.createElement("p");
+    p.textContent = `"${quote.text}"`;
+
+    const small = document.createElement("small");
+    small.textContent = `— ${quote.category}`;
+
+    quoteDisplay.appendChild(p);
+    quoteDisplay.appendChild(small);
+    quoteDisplay.appendChild(document.createElement("hr"));
+  });
+}
 
 // Show a random quote
 function showRandomQuote() {
@@ -47,7 +92,12 @@ function addQuote() {
     category: quoteCategory
   };
 
-  quotes.push(newQuote);
+  quotes.push({ text, category });
+  saveQuotes();
+
+  populateCategories(); // update categories dynamically
+  filterQuotes();       // refresh display
+
 
   // Clear inputs
   document.getElementById("newQuoteText").value = "";
