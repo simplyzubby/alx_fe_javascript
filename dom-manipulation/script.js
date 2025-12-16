@@ -20,7 +20,7 @@ async function fetchQuotesFromServer() {
     console.error("Server sync failed:", error);
   }
 }
-async function postQuoteToServer(quote) {
+async function syncQuotes(quote) {
   try {
     const response = await fetch(SERVER_URL, {
       method: "POST",              // <--- required by ALX
