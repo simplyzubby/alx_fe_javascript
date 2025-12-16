@@ -20,7 +20,22 @@ async function fetchQuotesFromServer() {
     console.error("Server sync failed:", error);
   }
 }
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",              // <--- required by ALX
+      headers: {
+        "Content-Type": "application/json"  // <--- required
+      },
+      body: JSON.stringify(quote)
+    });
 
+    const data = await response.json();
+    console.log("Quote sent to server:", data);
+  } catch (error) {
+    console.error("Failed to send quote to server:", error);
+  }
+}
 // --------------------
 // Sync Logic (Server Wins)
 // --------------------
@@ -172,7 +187,7 @@ function addQuote() {
 
   populateCategories(); // update categories dynamically
   filterQuotes();       // refresh display
-
+  postQuoteToServer(newQuote)
 
   // Clear inputs
   document.getElementById("newQuoteText").value = "";
